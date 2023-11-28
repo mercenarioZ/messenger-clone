@@ -7,6 +7,8 @@ import { FullConversationType } from '@/app/types';
 import useOtherUser from '@/app/hooks/useOtherUser';
 import { useSession } from 'next-auth/react';
 import { use, useCallback, useMemo } from 'react';
+import Avatar from '@/app/components/Avatar';
+import { format } from 'date-fns';
 
 interface ConversationBoxProps {
     data: FullConversationType;
@@ -17,14 +19,18 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     data,
     selected,
 }) => {
+    // useOtherUser is a custom hook that returns the other user in the conversation
     const otherUser = useOtherUser(data);
+    // useSession is a hook from next-auth that returns the current session data (user, token, etc)
     const session = useSession();
+    // useRouter is a hook from next/router that returns the router object (push, replace, etc)
     const router = useRouter();
 
     const handleClick = useCallback(() => {
         router.push(`/conversations/${data.id}`);
     }, [data.id, router]);
 
+    // useMemo is a hook that returns a value that is only recalculated when the dependencies change (in this case, the data.messages)
     const lastMessage = useMemo(() => {
         const messages = data.messages || [];
 
@@ -36,6 +42,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
         [session.data?.user?.email]
     );
 
+    // hasSeen is a boolean that returns true if the user has seen the last message in the conversation
     const hasSeen = useMemo(() => {
         if (!lastMessage) return false;
 
@@ -62,7 +69,73 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
         return 'Started your conversation';
     }, [lastMessage]);
 
-    return <div>Conversation Box</div>;
+    return (
+        <div
+            className={clsx(
+                `
+                w-full
+                relative
+                flex
+                items-center
+                space-x-3
+                hover:bg-neutral-100
+                rounded-lg
+                transition
+                cursor-pointer
+                p-2
+            `,
+                selected ? 'bg-neutral-100' : 'bg-white'
+            )}
+            onClick={handleClick}
+        >
+            <Avatar user={otherUser} />
+            <div className='min-w-0 flex-1'>
+                <div className='focus:outline-none'>
+                    <div
+                        className='
+                            flex
+                            justify-between
+                            items-center
+                            mb-1
+                        '
+                    >
+                        <p
+                            className='
+                                text-md
+                                font-medium
+                                text-gray-900
+                            '
+                        >
+                            {data.name || otherUser.name}
+                        </p>
+
+                        {lastMessage?.createdAt && (
+                            <p
+                                className='
+                                    text-xs
+                                    text-gray-400
+                                    font0-light
+                                '
+                            >
+                                {format(new Date(lastMessage?.createdAt), 'p')}
+                            </p>
+                        )}
+                    </div>
+
+                    <p
+                        className={clsx(`
+                            truncate
+                            text-sm
+                        `,
+                            hasSeen ? 'text-gray-400' : 'text-black font-medium'
+                        )}
+                    >
+                        {lastMessageText}
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default ConversationBox;
