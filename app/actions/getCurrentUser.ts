@@ -17,7 +17,7 @@ import getSession from './getSession';
 const getCurrentUser = async () => {
     try {
         const session = await getSession();
-        console.log('User session: ', session)
+        // console.log('User session: ', session)
 
         // If there is no session, return null
         if (!session?.user?.email) {
