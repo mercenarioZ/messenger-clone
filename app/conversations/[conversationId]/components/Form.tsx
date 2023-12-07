@@ -4,7 +4,9 @@ import useConversation from '@/app/hooks/useConversation';
 import axios from 'axios';
 import React from 'react';
 import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
-import { HiPhoto } from 'react-icons/hi2';
+import { HiPaperAirplane, HiPhoto } from 'react-icons/hi2';
+import MessageInput from './MessageInput';
+import { CldUploadButton } from 'next-cloudinary';
 
 const Form = () => {
     const { conversationId } = useConversation();
@@ -28,6 +30,13 @@ const Form = () => {
         });
     };
 
+    const handleUpload = (result: any) => {
+        axios.post('/api/messages', {
+            image: result?.info?.secure_url,
+            conversationId,
+        })
+    }
+
     return (
         <div
             className='
@@ -43,10 +52,16 @@ const Form = () => {
                 items-center
             '
         >
-            <HiPhoto
-                className='text-sky-500'
-                size={30}
-            />
+            <CldUploadButton
+                options={{ maxFiles: 1 }}
+                onUpload={handleUpload}
+                uploadPreset='o6iuwsu6'
+            >
+                <HiPhoto
+                    className='text-sky-500'
+                    size={30}
+                />
+            </CldUploadButton>
 
             <form
                 className='
@@ -58,7 +73,28 @@ const Form = () => {
                 '
                 onSubmit={handleSubmit(onSubmit)}
             >
-                Message input
+                <MessageInput
+                    id='message'
+                    register={register}
+                    errors={errors}
+                    required
+                    placeholder='Type a message...'
+                />
+
+                <button
+                    className='
+                    rounded-full
+                    py-2
+                    px-3
+                    bg-sky-500
+                    cursor-pointer
+                    text-white
+                    hover:bg-sky-400
+                    transition
+                '
+                >
+                    <HiPaperAirplane size={18} />
+                </button>
             </form>
         </div>
     );

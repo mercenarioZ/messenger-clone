@@ -64,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
 
                     <div
                         className='
-                            text
+                            text-sm
                             font-light
                             text-neutral-500
                         '
