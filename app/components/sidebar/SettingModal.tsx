@@ -114,6 +114,21 @@ const SettingModal: React.FC<SettingModalProps> = ({
               </div>
             </div>
           </div>
+
+          <div className="mt-6 flex items-center justify-end gap-x-4">
+            <Button
+              secondary
+              onClick={onClose}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              onClick={onClose}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </form>
     </Modal>
