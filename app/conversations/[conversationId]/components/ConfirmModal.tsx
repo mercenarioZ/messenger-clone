@@ -51,11 +51,11 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, onClose }) => {
             as="h3"
             className="text-base font-semibold text-gray-900"
           >
-            Delete conversation
+            Delete this conversation
           </Dialog.Title>
 
           <div className="mt-2">
-            <p className="text-sm text-gray-700">Are you sure?</p>
+            <p className="text-sm text-gray-700">Are you sure? This action can&apos;t be undone</p>
           </div>
         </div>
       </div>
