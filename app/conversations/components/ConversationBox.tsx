@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { use, useCallback, useMemo } from "react";
 import Avatar from "@/app/components/Avatar";
 import { format } from "date-fns";
+import AvatarGroup from "@/app/components/AvatarGroup";
 
 interface ConversationBoxProps {
   data: FullConversationType;
@@ -73,22 +74,24 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     <div
       className={clsx(
         `
-                w-full
-                relative
-                flex
-                items-center
-                space-x-3
-                hover:bg-neutral-100
-                rounded-lg
-                transition
-                cursor-pointer
-                p-2
-            `,
+          w-full
+          relative
+          flex
+          items-center
+          space-x-3
+          hover:bg-neutral-100
+          rounded-lg
+          transition
+          cursor-pointer
+          p-2
+        `,
         selected ? "bg-neutral-100" : "bg-white"
       )}
       onClick={handleClick}
     >
-      <Avatar user={otherUser} />
+      {/* Check if the conversation is a group or not */}
+      {data.isGroup ? <AvatarGroup users={data.users} /> : <Avatar user={otherUser} />}
+
       <div className="min-w-0 flex-1">
         <div className="focus:outline-none">
           <div
@@ -112,10 +115,10 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
             {lastMessage?.createdAt && (
               <p
                 className="
-                                    text-xs
-                                    text-gray-400
-                                    font0-light
-                                "
+                  text-xs
+                  text-gray-400
+                  font0-light
+                "
               >
                 {format(new Date(lastMessage?.createdAt), "p")}
               </p>
@@ -125,9 +128,9 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
           <p
             className={clsx(
               `
-                            truncate
-                            text-sm
-                        `,
+                truncate
+                text-sm
+              `,
               hasSeen ? "text-gray-400" : "text-black font-medium"
             )}
           >

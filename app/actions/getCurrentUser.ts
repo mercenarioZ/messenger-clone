@@ -1,5 +1,5 @@
-import prisma from '@/app/libs/prismadb';
-import getSession from './getSession';
+import prisma from "@/app/libs/prismadb";
+import getSession from "./getSession";
 
 /**
  * This asynchronous function is used to get the current user's information.
@@ -15,29 +15,29 @@ import getSession from './getSession';
  * @returns {Promise<User | null>} The current user's information, or null if no user is found or an error occurs.
  */
 const getCurrentUser = async () => {
-    try {
-        const session = await getSession();
+  try {
+    const session = await getSession();
 
-        // If there is no session, return null
-        if (!session?.user?.email) {
-            return null;
-        }
-
-        const currentUser = await prisma.user.findUnique({
-            where: {
-                email: session.user.email as string,
-            },
-        });
-
-        if (!currentUser) {
-            return null;
-        }
-        // Why return null? Why not throw an error? Because this function is used in the `getServerSideProps` function, which is used to get data for the page before it is rendered. If an error is thrown, the page will crash. If null is returned, the page will render without the user's information.
-
-        return currentUser;
-    } catch (error: any) {
-        return null;
+    // If there is no session, return null
+    if (!session?.user?.email) {
+      return null;
     }
+
+    const currentUser = await prisma.user.findUnique({
+      where: {
+        email: session.user.email as string,
+      },
+    });
+
+    if (!currentUser) {
+      return null;
+    }
+    // Why return null? Why not throw an error? Because this function is used in the `getServerSideProps` function, which is used to get data for the page before it is rendered. If an error is thrown, the page will crash. If null is returned, the page will render without the user's information.
+
+    return currentUser;
+  } catch (error: any) {
+    return null;
+  }
 };
 
 export default getCurrentUser;
