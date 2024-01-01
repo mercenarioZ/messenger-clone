@@ -4,11 +4,14 @@ import useConversation from "@/app/hooks/useConversation";
 import { FullConversationType } from "@/app/types";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import ConversationBox from "./ConversationBox";
 import GroupChatModal from "./GroupChatModal";
 import { User } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { pusherClient } from "@/app/libs/pusher";
+import { find } from "lodash";
 
 interface ConversationListProps {
   initialItems: FullConversationType[];
@@ -21,10 +24,60 @@ const ConversationList: React.FC<ConversationListProps> = ({
 }) => {
   const [items, setItems] = useState(initialItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const session = useSession();
 
   const router = useRouter();
 
   const { conversationId, isOpen } = useConversation();
+
+  const pusherKey = useMemo(() => {
+    return session?.data?.user?.email;
+  }, [session?.data?.user?.email]);
+
+  useEffect(() => {
+    if (!pusherKey) return;
+
+    pusherClient.subscribe(pusherKey);
+
+    const newConversationHandler = (conversation: FullConversationType) => {
+      setItems((current) => {
+        if (find(current, { id: conversation.id })) {
+          return current;
+        }
+
+        return [conversation, ...current];
+      });
+    };
+
+    // Update conversation handler
+    const updateConversationHandler = (conversation: FullConversationType) => {
+      setItems((current) =>
+        current.map((currentConversation) => {
+          if (currentConversation.id === conversation.id) {
+            return {
+              ...currentConversation,
+              messages: conversation.messages,
+            };
+          }
+
+          return currentConversation;
+        })
+      );
+    };
+
+    // Bind the new conversation event
+    pusherClient.bind("new-conversation", newConversationHandler);
+
+    // Bind the update conversation event
+    pusherClient.bind("update-conversation", updateConversationHandler);
+
+    // Unsubscribe when component unmount
+    return () => {
+      pusherClient.unsubscribe(pusherKey);
+      pusherClient.unbind("new-conversation", newConversationHandler);
+      pusherClient.unbind("update-conversation", updateConversationHandler)
+    };
+  }, [pusherKey]);
 
   return (
     <>
@@ -34,6 +87,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
       <aside
         className={clsx(
           `

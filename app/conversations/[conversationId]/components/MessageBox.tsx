@@ -25,6 +25,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLastMessage }) => {
     // Join the list with a comma
     .join(", ");
 
+  // Styles
+  // if the message is sent by the current user, align the message to the right
   const container = clsx("flex gap-3 p-4", isOwn && "justify-end");
 
   const avatar = clsx(isOwn && "order-2");

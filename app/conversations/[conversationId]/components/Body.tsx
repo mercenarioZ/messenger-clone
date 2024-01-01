@@ -27,22 +27,36 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
     bottomRef?.current?.scrollIntoView();
 
     const messageHandler = (message: FullMessageType) => {
-      setMessages(current => {
+      setMessages((current) => {
         if (find(current, { id: message.id })) {
           return current;
         }
 
         return [...current, message];
-      })
+      });
+    };
+
+    const updateMessageHandler = (newMessage: FullMessageType) => {
+      setMessages((current) =>
+        current.map((currentMessage) => {
+          if (currentMessage.id === newMessage.id) {
+            return newMessage;
+          }
+
+          return currentMessage;
+        })
+      );
     };
 
     pusherClient.bind("new-message", messageHandler);
+    pusherClient.bind("update-message", updateMessageHandler);
 
     // Unsubscribe from channel when component unmounts
     return () => {
       pusherClient.unsubscribe(conversationId);
       pusherClient.unbind("new-message", messageHandler);
-    }
+      pusherClient.unbind("update-message", updateMessageHandler);
+    };
   }, [conversationId]);
 
   return (

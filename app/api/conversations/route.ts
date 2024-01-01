@@ -1,7 +1,9 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
+import { pusherServer } from "@/app/libs/pusher";
 
+// This route is used to create a new conversation between two users or a group conversation or to get an existing conversation between two users or a group conversation
 export async function POST(request: Request) {
   try {
     // Get the current user
@@ -49,6 +51,12 @@ export async function POST(request: Request) {
           users: true,
         },
       });
+
+      newConversation.users.forEach(user => {
+        if (user.email) {
+          pusherServer.trigger(user.email, "new-conversation", newConversation)
+        }
+      })
 
       // Return the new conversation
       return NextResponse.json(newConversation);
@@ -100,6 +108,13 @@ export async function POST(request: Request) {
         users: true,
       },
     });
+
+    newConversation.users.map(user => {
+      // Check if the user has an email, if so, send a pusher event to the user with the email
+      if (user.email) {
+        pusherServer.trigger(user.email, "new-conversation", newConversation)
+      }
+    })
 
     return NextResponse.json(newConversation);
   } catch (error: any) {
