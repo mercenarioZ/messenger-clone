@@ -65,19 +65,34 @@ const ConversationList: React.FC<ConversationListProps> = ({
       );
     };
 
+    const deleteConversationHandler = (conversation: FullConversationType) => {
+      setItems((current) => {
+        return [...current.filter((item) => item.id !== conversation.id)];
+      });
+
+      // Redirect to conversation list if the current conversation is deleted. This effect can be clearly seen when your screen is small or the opponent deletes the conversation.
+      if (conversationId === conversation.id) {
+        router.push("/conversations");
+      }
+    };
+
     // Bind the new conversation event
     pusherClient.bind("new-conversation", newConversationHandler);
 
     // Bind the update conversation event
     pusherClient.bind("update-conversation", updateConversationHandler);
 
+    // Bind the delete conversation event
+    pusherClient.bind("delete-conversation", deleteConversationHandler);
+
     // Unsubscribe when component unmount
     return () => {
       pusherClient.unsubscribe(pusherKey);
       pusherClient.unbind("new-conversation", newConversationHandler);
-      pusherClient.unbind("update-conversation", updateConversationHandler)
+      pusherClient.unbind("update-conversation", updateConversationHandler);
+      pusherClient.unbind("delete-conversation", deleteConversationHandler);
     };
-  }, [pusherKey]);
+  }, [pusherKey, conversationId, router]);
 
   return (
     <>
