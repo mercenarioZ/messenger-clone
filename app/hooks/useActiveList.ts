@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from "zustand";
 
 interface ActiveListStoreProps {
@@ -9,7 +10,7 @@ interface ActiveListStoreProps {
 
 const useActiveList = create<ActiveListStoreProps>((set) => ({
   members: [],
-  
+
   add: (id) => set((state) => ({ members: [...state.members, id] })),
 
   remove: (id) =>
@@ -19,3 +20,5 @@ const useActiveList = create<ActiveListStoreProps>((set) => ({
 
   set: (ids) => set(() => ({ members: ids })),
 }));
+
+export default useActiveList;
