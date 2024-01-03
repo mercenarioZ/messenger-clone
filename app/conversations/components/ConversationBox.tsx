@@ -1,15 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { User, Conversation, Message } from "@prisma/client";
-import clsx from "clsx";
-import { FullConversationType } from "@/app/types";
-import useOtherUser from "@/app/hooks/useOtherUser";
-import { useSession } from "next-auth/react";
-import { use, useCallback, useMemo } from "react";
 import Avatar from "@/app/components/Avatar";
-import { format } from "date-fns";
 import AvatarGroup from "@/app/components/AvatarGroup";
+import useOtherUser from "@/app/hooks/useOtherUser";
+import { FullConversationType } from "@/app/types";
+import clsx from "clsx";
+import { format } from "date-fns";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useCallback, useMemo } from "react";
 
 interface ConversationBoxProps {
   data: FullConversationType;
