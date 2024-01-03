@@ -18,7 +18,7 @@ const useActiveList = create<ActiveListStoreProps>((set) => ({
       members: state.members.filter((memId) => memId !== id),
     })),
 
-  set: (ids) => set(() => ({ members: ids })),
+  set: (ids) => set({ members: ids }),
 }));
 
 export default useActiveList;
