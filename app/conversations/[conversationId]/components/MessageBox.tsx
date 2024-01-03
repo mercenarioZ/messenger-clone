@@ -22,7 +22,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLastMessage }) => {
     .filter((user) => user.email !== data?.sender?.email)
     // Map the seen list to the name of the user
     .map((user) => user.name)
-    // Join the list with a comma
+    // Join the list with a comma. Example: "John, Jane, Bob"
     .join(", ");
 
   // Styles

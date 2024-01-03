@@ -29,7 +29,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 
   const handleClick = useCallback(() => {
     router.push(`/conversations/${data.id}`);
-  }, [data.id, router]);
+  }, [data, router]);
 
   // useMemo is a hook that returns a value that is only recalculated when the dependencies change (in this case, the data.messages)
   const lastMessage = useMemo(() => {

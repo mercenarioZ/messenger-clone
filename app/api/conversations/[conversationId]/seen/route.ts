@@ -64,6 +64,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
       },
     });
 
+    // update all connections with new seen message
     await pusherServer.trigger(currentUser.email, "update-conversation", {
       id: conversationId,
       messages: [updatedMessage],
@@ -71,12 +72,17 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 
     // If the current user has already seen the message, return the conversation
     if (lastMessage.seenIds.indexOf(currentUser.id) !== -1) {
-      return NextResponse.json(conversation)
+      return NextResponse.json(conversation);
     }
 
-    await pusherServer.trigger(conversationId!, "update-message", updatedMessage);
+    // update the last message seen
+    await pusherServer.trigger(
+      conversationId!,
+      "update-message",
+      updatedMessage
+    );
 
-    return NextResponse.json(updatedMessage);
+    return new NextResponse("OK");
   } catch (error: any) {
     console.log(error, "ERROR_MESSAGES_SEEN");
     return new NextResponse("Internal Server Error", { status: 500 });
