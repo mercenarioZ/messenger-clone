@@ -52,7 +52,7 @@ const Form = () => {
         items-center
       "
     >
-      <CldUploadButton
+      {/* <CldUploadButton
         options={{ maxFiles: 1 }}
         onUpload={handleUpload}
         uploadPreset="o6iuwsu6"
@@ -61,7 +61,7 @@ const Form = () => {
           className="text-sky-500"
           size={30}
         />
-      </CldUploadButton>
+      </CldUploadButton> */}
 
       <form
         className="
